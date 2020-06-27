@@ -2,6 +2,7 @@
 typedef struct node
 {
 	int data;
+	struct node *prev;
 	struct node *next;
 }node_t;
 
@@ -21,8 +22,10 @@ extern void add_node_at_tail(node_t *root,int data);
 
 extern node_t *delete_node_at_head(node_t *root);
 
-extern int size_of_list(node_t *root);
+extern void delete_node_at_tail(node_t *root);
 
 extern void print_list(node_t *root);
+
+extern void print_list_full_node(node_t *root);
 
 extern void free_list(node_t *root);

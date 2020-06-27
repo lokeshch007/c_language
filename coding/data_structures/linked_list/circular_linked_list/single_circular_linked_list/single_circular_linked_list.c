@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include"singly_linked_list.h"
+#include"single_circular_linked_list.h"
 
 static int init_flag=0;
 
@@ -21,7 +21,7 @@ node_t *list_init(int data)
 		exit(1);
 	}
 	root->data=data;
-	root->next=NULL;
+	root->next=root;
 	return root;
 }
 
@@ -127,10 +127,17 @@ node_t *add_node_at_head(node_t *root,int data)
 	else
 	{
 		node_t *temp=create_node_memory();
+		node_t *trav=root;
 		temp->data=data;
 		temp->next=root;
+		/* Update tail element's next to latest root */
+		while(!((trav->next)==root))
+		{
+			trav=trav->next;
+		}
+		trav->next=temp;
+
 		list_size++;
-		printf("2\n");
 		return temp;
 	}
 }
@@ -140,45 +147,35 @@ void add_node_at_tail(node_t *root,int data)
 	node_t *temp=create_node_memory();
 	node_t *trav=root;
 
-	while(trav->next)
+	while(!((trav->next)==root))
 	{
 		trav=trav->next;
 	}
 	temp->data=data;
-	temp->next=NULL;
+	temp->next=root;
 	trav->next=temp;
 	list_size++;
 }
 
 node_t *delete_node_at_head(node_t *root)
 {
-	static node_t temp;	
+	node_t *trav=root;
 	if(!list_size)
 	{
 		printf("Empty list\n");
 		return NULL;
 	}
-	temp.next=root->next;
+	/* Update tail element's next to latest root */
+	while(!((trav->next)==root))
+	{
+		trav=trav->next;
+	}
+	trav->next=root->next;
 	free(root);
 	list_size--;
-	return temp.next;
+	return trav->next;
 }
 
-
-int size_of_list(node_t *root)
-{
-	int size=0;
-
-	if(root==NULL)
-		return 0;
-
-	node_t *trav=create_node_memory();
-	trav->next=root->next;
-
-	for(size=0;trav->next != NULL;trav->next=trav->next->next,size++);
-	free(trav);
-	return size+1;
-}
 
 void print_list(node_t *root)
 {
@@ -190,7 +187,7 @@ void print_list(node_t *root)
 		return;
 	}
 	printf("[START]  ");
-	while(trav->next)
+	while(!((trav->next)==root))
 	{
 		printf("%d->",trav->data);
 		trav=trav->next;
@@ -201,12 +198,13 @@ void print_list(node_t *root)
 
 void free_list(node_t *root)
 {
+	node_t *trav=root;
 	node_t *temp;
-	while(root->next)
+	while(!((trav->next)==root))
 	{
-		temp=root->next;
-		free(root);
-		root=temp;
+		temp=trav->next;
+		free(trav);
+		trav=temp;
 	}
-	free(root);
+	free(trav);
 }

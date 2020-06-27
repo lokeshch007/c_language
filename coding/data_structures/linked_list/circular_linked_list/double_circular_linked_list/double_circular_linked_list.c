@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include"singly_linked_list.h"
+#include"double_circular_linked_list.h"
 
 static int init_flag=0;
 
@@ -21,7 +21,8 @@ node_t *list_init(int data)
 		exit(1);
 	}
 	root->data=data;
-	root->next=NULL;
+	root->prev=root;
+	root->next=root;
 	return root;
 }
 
@@ -78,7 +79,9 @@ int add_node_position(node_t *root,int position,int data)
 			trav=trav->next;
 		}
 		temp->data=data;
+		temp->prev=trav;
 		temp->next=trav->next;
+		temp->next->prev=temp;
 		trav->next=temp;
 		list_size++;
 	}
@@ -107,9 +110,11 @@ int delete_node_position(node_t *root,int position)
 		trav=trav->next;
 	}
 
+	temp->prev=trav->next->prev;
 	temp->next=trav->next->next;
 	free(trav->next);
 	trav->next=temp->next;
+	trav->next->prev=temp->prev;
 	list_size--;
 	free(temp);
 	return 0;
@@ -127,10 +132,19 @@ node_t *add_node_at_head(node_t *root,int data)
 	else
 	{
 		node_t *temp=create_node_memory();
+		node_t *trav=root;
+
+		/* Trav to end element */
+		while(!((trav->next)==root))
+		{
+			trav=trav->next;
+		}
 		temp->data=data;
+		temp->prev=trav;
 		temp->next=root;
+		root->prev=temp;
+		trav->next=temp;
 		list_size++;
-		printf("2\n");
 		return temp;
 	}
 }
@@ -140,13 +154,16 @@ void add_node_at_tail(node_t *root,int data)
 	node_t *temp=create_node_memory();
 	node_t *trav=root;
 
-	while(trav->next)
+	/* Trav to end element */
+	while(!((trav->next)==root))
 	{
 		trav=trav->next;
 	}
 	temp->data=data;
-	temp->next=NULL;
+	temp->prev=trav;
+	temp->next=root;
 	trav->next=temp;
+	root->prev=temp;
 	list_size++;
 }
 
@@ -159,25 +176,34 @@ node_t *delete_node_at_head(node_t *root)
 		return NULL;
 	}
 	temp.next=root->next;
+	root->next->prev=root->prev;
+	root->prev->next=temp.next;
 	free(root);
 	list_size--;
 	return temp.next;
 }
 
-
-int size_of_list(node_t *root)
+void delete_node_at_tail(node_t *root)
 {
-	int size=0;
+	node_t *trav=root;
 
-	if(root==NULL)
-		return 0;
-
-	node_t *trav=create_node_memory();
-	trav->next=root->next;
-
-	for(size=0;trav->next != NULL;trav->next=trav->next->next,size++);
-	free(trav);
-	return size+1;
+	if(!list_size)
+	{
+		printf("Empty list\n");
+		return;
+	}
+	
+	/* Trav to end element */
+	while(!((trav->next)==root))
+	{
+		trav=trav->next;
+	}
+	/* Now trav is at last element since trav->next=root */
+	trav->next->prev=trav->prev;
+	trav=trav->prev;/* move a step back */
+	free(trav->next);
+	trav->next=root;
+	list_size--;
 }
 
 void print_list(node_t *root)
@@ -190,7 +216,8 @@ void print_list(node_t *root)
 		return;
 	}
 	printf("[START]  ");
-	while(trav->next)
+	/* Trav to end element */
+	while(!((trav->next)==root))
 	{
 		printf("%d->",trav->data);
 		trav=trav->next;
@@ -199,14 +226,64 @@ void print_list(node_t *root)
 
 }
 
+void print_list_full_node(node_t *root)
+{
+	node_t *trav=root;
+	int i=0;
+	if(trav==NULL)
+	{
+		printf("Empty list\n");
+		return;
+	}
+
+	/* Printing PREV address */
+	printf("     [%8u]",trav->prev);
+	trav=trav->next;
+	/* Trav to end element */
+	while(!((trav->next)==root))
+	{
+		printf("<------[%8u]",trav->prev);
+		trav=trav->next;
+	}
+	printf("<------[%8u]\n\n",trav->prev);
+
+	/* printing DATA */
+	trav=root;
+	/* Trav to end element */
+	while(!((trav->next)==root))
+	{
+		printf("[%8u]:[%2d]->",trav,trav->data);
+		trav=trav->next;
+	}
+	printf("[%8u]:[%2d]\n\n",trav,trav->data);
+	
+	/* Printing NEXT address */
+	trav=root;
+	printf("     [%8u]------>",trav->next);
+	trav=trav->next;
+	/* Trav to end element */
+	while(!((trav->next)==root))
+	{
+		printf("[%8u]------>",trav->next);
+		trav=trav->next;
+	}
+	printf("[%8u]\n\n",trav->next);
+
+}
+
 void free_list(node_t *root)
 {
 	node_t *temp;
-	while(root->next)
+	node_t *trav=root;
+	if(!temp)
+		return;
+	
+	/* Trav to end element */
+	while(!((trav->next)==root))
 	{
-		temp=root->next;
-		free(root);
-		root=temp;
+		temp=trav->next;
+		free(trav);
+		trav=temp;
 	}
-	free(root);
+	free(trav);
 }
