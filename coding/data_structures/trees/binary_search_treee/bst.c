@@ -181,7 +181,26 @@ void bst_print_inorder(bst_node_t* node_ptr)
 	bst_print_inorder(node_ptr->right);
 }
 
-void bst_free(void)
+void bst_free(bst_node_t* node_ptr)
 {
+	if((!(node_ptr->left)) && (!(node_ptr->right))) /* Leaf node */
+	{
+		free(node_ptr);
+		return NULL;
+	}
+	else if((node_ptr->left) && (!(node_ptr->right))) /* Node with left child */
+	{
+		node_ptr->left = bst_free(node_ptr->left);
+	}
+	else if((!(node_ptr->left)) && (node_ptr->right)) /* Node with right child */
+	{
+		node_ptr->right = bst_free(node_ptr->right);
+	}
+	else if((node_ptr->left)) && (node_ptr->right)) /* Node with left and right child */
+	{
+		node_ptr->left = bst_free(node_ptr->left);
+		node_ptr->right = bst_free(node_ptr->right);
+		return bst_free(node_ptr);
+	}
 	
 }

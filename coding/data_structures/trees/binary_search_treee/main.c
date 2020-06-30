@@ -47,6 +47,6 @@ int main(void)
 		if(!opt)
 			break;
 	}
-	bst_free();
+	bst_free(root);
 	return 0;
 }
