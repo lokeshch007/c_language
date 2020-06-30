@@ -183,4 +183,5 @@ void bst_print_inorder(bst_node_t* node_ptr)
 
 void bst_free(void)
 {
+	
 }
