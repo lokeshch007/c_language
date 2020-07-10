@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include"double_circular_linked_list.h"
 
-int list_size =0;
 
 int main(void)
 {

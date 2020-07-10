@@ -3,7 +3,7 @@
 #include"double_circular_linked_list.h"
 
 static int init_flag=0;
-int list_size =0;
+int list_size=0;
 
 node_t *create_node_memory(void)
 {
@@ -24,6 +24,7 @@ node_t *list_init(int data)
 	root->data=data;
 	root->prev=root;
 	root->next=root;
+	list_size++;
 	return root;
 }
 
@@ -176,6 +177,12 @@ node_t *delete_node_at_head(node_t *root)
 		printf("Empty list\n");
 		return NULL;
 	}
+
+	if(!(list_size^1))
+	{
+		free(root);
+		return NULL;
+	}
 	temp.next=root->next;
 	root->next->prev=root->prev;
 	root->prev->next=temp.next;
@@ -192,6 +199,11 @@ void delete_node_at_tail(node_t *root)
 	{
 		printf("Empty list\n");
 		return;
+	}
+	
+	if(!(list_size^1))
+	{
+		free(root);
 	}
 	
 	/* Trav to end element */

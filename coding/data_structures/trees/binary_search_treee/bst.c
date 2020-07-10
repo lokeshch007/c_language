@@ -2,6 +2,11 @@
 #include<stdlib.h>
 #include"bst.h"
 
+
+#define MAX(x,y) (x>y)?x:y
+#define SPACE_COUNT 5
+
+
 bst_node_t* root=NULL;
 static int tree_ele_count=0;
 static bst_node_t* temp=NULL;
@@ -60,25 +65,26 @@ int no_of_child(bst_node_t* node_ptr)
 
 bst_node_t* min_of_bst(bst_node_t* node_ptr)
 {
-	printf("min_of_bst(): Received PTR:%u, PTR->LEFT=%u\tPTR->RIGHT=%u\n",node_ptr,node_ptr->left,node_ptr->right);
 	if(!node_ptr)
 	{
 		return NULL;
 	}
+	while(node_ptr->left)
+		node_ptr=node_ptr->left;
+	return node_ptr;
 
-	switch(no_of_child(node_ptr))
+}
+
+bst_node_t* max_of_bst(bst_node_t* node_ptr)
+{
+	if(!node_ptr)
 	{
-		case	0	:	/* MIN Element */
-			return node_ptr;
-		case	1	:	
-		case	2	:/* Traverse left subtree to get min value */
-			if(!node_ptr->left)/* NULL CHECK */
-				return node_ptr;
-			return min_of_bst(node_ptr->left);
-		default:
-			printf("min_of_bst(): Something went wrong\n");
-			return NULL;
+		return NULL;
 	}
+	while(node_ptr->right)
+		node_ptr=node_ptr->right;
+	return node_ptr;
+
 }
 
 bst_node_t* bst_delete(bst_node_t* node_ptr,int data)
@@ -153,23 +159,27 @@ int bst_height(void)
 {
 }
 
-int bst_node_height(int data)
+int bst_node_height(bst_node_t *node_ptr)
+{
+	int left_height=0;
+	int right_height=0;
+	int height=0;
+
+	if(!node_ptr)
+		return -1;
+
+	left_height = bst_node_height(node_ptr->left);
+	right_height = bst_node_height(node_ptr->right);
+
+	height = MAX(left_height,right_height);
+
+	return height+1;
+}
+
+int bst_node_depth(bst_node_t *node_ptr)
 {
 }
 
-int bst_node_depth(int data)
-{
-}
-
-bst_node_t* get_successor(bst_node_t* node_ptr,int data)
-{
-	bst_node_t* current;
-	current=bst_search(node_ptr,data);
-	if(!current)
-		return NULL;
-	if(current->right)
-		return min_of_bst(current->right);
-}
 
 void bst_print_inorder(bst_node_t* node_ptr)
 {
@@ -181,7 +191,47 @@ void bst_print_inorder(bst_node_t* node_ptr)
 	bst_print_inorder(node_ptr->right);
 }
 
+<<<<<<< HEAD
+void bst_print_in_2d(bst_node_t* node_ptr,int space)
+{
+	int i=0;
+	if(!node_ptr)
+		return;
+
+	/* Increase distance between levels */
+	space += SPACE_COUNT;
+
+	/* Process right child first */
+	bst_print_in_2d(node_ptr->right,space);
+
+	/* Print current node after space */
+	printf("\n");
+	for(i=SPACE_COUNT;i<space;i++)
+		printf(" ");
+	printf("%d\n",node_ptr->data);
+
+	/* Process left child */
+	bst_print_in_2d(node_ptr->left,space);
+
+}
+
+int bst_size(bst_node_t* node_ptr)
+{
+	int left_size=0,right_size=0;
+
+	if(!node_ptr)
+		return 0;
+
+	left_size=bst_size(node_ptr->left);
+	right_size=bst_size(node_ptr->right);
+
+	return left_size+right_size+1;
+}
+
+void bst_free(void)
+=======
 void bst_free(bst_node_t* node_ptr)
+>>>>>>> d36f22168d0464d511d0c7ef11c8e9e60ebb55cd
 {
 	if((!(node_ptr->left)) && (!(node_ptr->right))) /* Leaf node */
 	{
