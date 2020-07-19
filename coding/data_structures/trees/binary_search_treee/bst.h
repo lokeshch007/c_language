@@ -34,5 +34,5 @@ extern void bst_print_in_2d(bst_node_t* node_ptr,int space);
 
 extern int bst_size(bst_node_t* node_ptr);
 
-extern void bst_free(void);
+extern bst_node_t* bst_free(bst_node_t* root);
 

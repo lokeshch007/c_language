@@ -191,7 +191,6 @@ void bst_print_inorder(bst_node_t* node_ptr)
 	bst_print_inorder(node_ptr->right);
 }
 
-<<<<<<< HEAD
 void bst_print_in_2d(bst_node_t* node_ptr,int space)
 {
 	int i=0;
@@ -228,10 +227,7 @@ int bst_size(bst_node_t* node_ptr)
 	return left_size+right_size+1;
 }
 
-void bst_free(void)
-=======
-void bst_free(bst_node_t* node_ptr)
->>>>>>> d36f22168d0464d511d0c7ef11c8e9e60ebb55cd
+bst_node_t* bst_free(bst_node_t* node_ptr)
 {
 	if((!(node_ptr->left)) && (!(node_ptr->right))) /* Leaf node */
 	{
@@ -246,7 +242,7 @@ void bst_free(bst_node_t* node_ptr)
 	{
 		node_ptr->right = bst_free(node_ptr->right);
 	}
-	else if((node_ptr->left)) && (node_ptr->right)) /* Node with left and right child */
+	else if((node_ptr->left) && (node_ptr->right)) /* Node with left and right child */
 	{
 		node_ptr->left = bst_free(node_ptr->left);
 		node_ptr->right = bst_free(node_ptr->right);
