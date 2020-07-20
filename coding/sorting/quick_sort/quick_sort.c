@@ -27,21 +27,25 @@ void print_array(int *array,int size)
 
 int partition(int *array,int start,int end)
 {
-	int pivot=array[end];
-	int pIndex=start; /* Index of smaller element */
-	int i=0;
-
-	for(i=start;i<end;i++)
+	int pivot=start;
+	int i=start,j=end;
+	int temp;
+	while(i<j)
 	{
-		if(array[i] <= pivot)
-		{
-			printf("start:%d\tend:%d\n",start,end);
-			swap(&array[i],&array[pIndex]);
-			pIndex++;
-		}
+	    while(array[i]<=array[pivot] && i<=end) i++;
+	    while(array[j]>array[pivot] && j>=start) j--;
+	    if(i<j)/* i didn't passed j*/
+	    {
+	       temp=array[i];
+	       array[i]=array[j];
+	       array[j]=temp;
+	    }
+    	/* swap pivot element to its position that is j position */
+	    temp=array[pivot];
+	    array[pivot]=array[j];
+	    array[j]=temp;
 	}
-	swap(&array[pIndex],&array[end]);
-	return pIndex;
+	return j;
 }
 
 void quick_sort_internal(int *array,int start,int end)
