@@ -17,40 +17,46 @@ int main(void)
 		scanf("%d",&opt);
 		switch(opt)
 		{
-			case	1	:	if(!(pop(&data))) 
+			case	1	:	/* 1.Pop */
+								if(!(pop(&data))) 
 									printf("popped %d\n",data);
 								else	
 									printf("pop error\n");
 								break;
 
-			case	2	:	printf("Enter data : ");
+			case	2	:	/* 2.Push */
+								printf("Enter data : ");
 								scanf("%d",&data);
 								if(push(data))
 										printf("push error\n");
 								break;
 
-			case	3	:	if(!(peek(&data)))
+			case	3	:	/* 3.Peek */
+								if(!(peek(&data)))
 									printf("Top element is : %d\n",data);
 								else
 									printf("peek error\n");
 								break;
 
-			case	4	:	print_stack();
+			case	4	:	/* 4.Print stack */
+								print_stack();
 								break;
 
-			case	5	:	if(!(size_of_stack(&data)))
+			case	5	:	/* 5.Size of stack */
+								if(!(size_of_stack(&data)))
 									printf("Size of stack : %d\n",data);
 								else 
 									printf("size of stack reading error\n");
 								break;
 
-			case	6	:	printf("Enter new stack size : ");
+			case	6	:	/* 6.Resize stack */
+								printf("Enter new stack size : ");
 								scanf("%d",&data);
 								if(!(resize_stack(data))) 
 									printf("Stack resized successfully\n");
 								else
 									printf("Stack resize failed\n");
-			case	7	:	break;
+			case	7	:	/* 7.Exit */break;
 
 			default	:	printf("Invalid choice\n");
 								break;
@@ -58,5 +64,6 @@ int main(void)
 
 		if(!(opt^7)) break;
 	}
+	free_stack();
 	return 0;
 }

@@ -3,8 +3,8 @@
 
 int main(void)
 {
-	int array[]={9,2,-66,10,125,66};
-	int size=6;
+	int array[]={8,6,8,1,2,6,7,7,6,3};
+	int size=10;
 
 	print_array(array,size);
 
