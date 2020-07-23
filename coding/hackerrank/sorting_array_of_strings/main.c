@@ -36,10 +36,9 @@ int no_of_dist_chars(const char *a)
 	for(int i=1;i<strlen(temp);i++)
 	{
 		temp2=temp[i];
-		if(temp2==temp[i-1])
+		if(temp2!=temp[i-1])
 			sets++;
 	}
-	printf("----------------%s:%d:%d\n",a,strlen(a),sets);
 	return sets;
 }
 
@@ -110,7 +109,7 @@ int main()
 
 	string_sort(arr, n, sort_by_length);
 	for(int i = 0; i < n; i++)
-		printf("%s\n", arr[i]);    
+		printf("%s\n", arr[i]); 
 	printf("\n");
 
 	string_sort(arr, n, sort_by_number_of_distinct_characters);
