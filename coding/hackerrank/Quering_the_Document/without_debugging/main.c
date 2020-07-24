@@ -5,90 +5,126 @@
 #define MAX_CHARACTERS 1005
 #define MAX_PARAGRAPHS 5
 
-char* kth_word_in_mth_sentence_of_nth_paragraph(char**** document, int k, int m, int n) {
 
+char* kth_word_in_mth_sentence_of_nth_paragraph(char**** document, int k, int m, int n) {
+	return document[n-1][m-1][k-1];
 }
 
 char** kth_sentence_in_mth_paragraph(char**** document, int k, int m) { 
-
+	return document[m-1][k-1];
 }
 
 char*** kth_paragraph(char**** document, int k) {
-
+	return document[k-1];
 }
 
 char**** get_document(char* text) {
+	typedef struct index
+	{
+		int start_index;
+		int end_index;
+	}index;
+
 	int raw_text_length=strlen(text);
 	int para_count=1,sentence_count=1,word_count=1;
-	int para_indexes[5]={0};
+	index para_indexes[5];
+	para_indexes[para_count-1].start_index=0;
+
 	/* Calculating no.of paras */
-	for(int i=0;i<raw_text_length;i++)
+	for(int i=0;i<=raw_text_length;i++)
 	{
 		if(text[i]=='\n')
 		{
-			para_indexes[para_count]=i+1;
+			para_indexes[para_count-1].end_index=i-1;
 			para_count++;
-		}
+			para_indexes[para_count-1].start_index=i+1;
+		}			
 	}
+	para_indexes[para_count-1].end_index=raw_text_length-1;
+	para_indexes[para_count].start_index=raw_text_length+1;
+	para_indexes[para_count].end_index=raw_text_length+1;
 
 	char ****doc=NULL;
 	doc=(char****)calloc(para_count,sizeof(char***));
 
 	/* Calculating no.of sentences per para */
-	int **sentence_index=(int**)calloc(para_count,sizeof(int*));
+	index **sentence_index=(index**)calloc(para_count,sizeof(index*));
 	int *sentence_count_of_para=(int*)calloc(para_count,sizeof(int));
 
 	for(int i=0;i<para_count;i++)
 	{
-		sentence_index[i]=(int*)realloc(sentence_index[i],sentence_count*sizeof(int));
-		sentence_index[i][sentence_count-1]=para_indexes[i];
-		for(int j=para_indexes[i];j<para_indexes[i+1]-1;j++)
+		sentence_index[i]=(index*)realloc(sentence_index[i],sentence_count*sizeof(index));
+		sentence_index[i][sentence_count-1].start_index=para_indexes[i].start_index;
+		
+		for(int j=para_indexes[i].start_index;j<para_indexes[i].end_index;j++)
 		{
 			if(text[j]=='.')
 			{
-				if(text[j+1]!='\n')
-				{
-					sentence_count++;
-					sentence_index[i]=(int*)realloc(sentence_index[i],sentence_count*sizeof(int));
-					sentence_index[i][sentence_count-1]=j+1;
-				}
+				sentence_index[i][sentence_count-1].end_index=j-1;
+				sentence_count++;
+				sentence_index[i]=(index*)realloc(sentence_index[i],sentence_count*sizeof(index));
+				sentence_index[i][sentence_count-1].start_index=j+1;
+		
 			}
 		}
+		sentence_index[i][sentence_count-1].end_index=para_indexes[i].end_index-1;
 		doc[i]=(char***)calloc(sentence_count,sizeof(char**));
 		sentence_count_of_para[i]=sentence_count;
 		sentence_count=1;
 	}
 
 	/* Calculating no.of words in each sentence */
-	int ***word_index=(int***)calloc(para_count,sizeof(int**));
+	index ***word_index=(index***)calloc(para_count,sizeof(index**));
 	int **word_count_of_sentence=(int**)calloc(para_count,sizeof(int*));
 	for(int i=0;i<para_count;i++)
 	{
-		word_index[i]=(int**)calloc(sentence_count_of_para[i],sizeof(int**));
+		word_index[i]=(index**)calloc(sentence_count_of_para[i],sizeof(index**));
 		word_count_of_sentence[i]=(int*)calloc(sentence_count_of_para[i],sizeof(int));
 		for(int j=0;j<sentence_count_of_para[i];j++)
 		{
-			word_index[i][j]=(int*)realloc(word_index[i][j],word_count*sizeof(int));
-			word_index[i][j][word_count-1]=sentence_index[i][j];
-			for(int k=sentence_index[i][j];k<sentence_index[i][j+1]-1;k++)
+			word_index[i][j]=(index*)realloc(word_index[i][j],word_count*sizeof(index));
+			word_index[i][j][word_count-1].start_index=sentence_index[i][j].start_index;
+			for(int k=sentence_index[i][j].start_index;k<=sentence_index[i][j].end_index;k++)
 			{
 				if(text[k]==' ')
 				{
-					if(text[k+1]!='.')
-					{
-						word_count++;
-						word_index[i][j]=(int*)realloc(word_index[i][j],word_count*sizeof(int));
-						word_index[i][j][word_count-1]=k+1;
-					}
+					word_index[i][j][word_count-1].end_index=k-1;
+					word_count++;
+					word_index[i][j]=(index*)realloc(word_index[i][j],word_count*sizeof(index));
+					word_index[i][j][word_count-1].start_index=k+1;
 				}
 			}
+			word_index[i][j][word_count-1].end_index=sentence_index[i][j].end_index;
 			word_count_of_sentence[i][j]=word_count;
 			doc[i][j]=(char**)calloc(word_count,sizeof(char*));
 			word_count=1;
 		}
 	}
 
-	/* create strlen(words) mem sizes for all words in doc[i]->sentence[i][j]=? */
+	/* Creating memory for words */
+	for(int i=0;i<para_count;i++)
+	{
+		for(int j=0;j<sentence_count_of_para[i];j++)
+		{
+			for(int k=0;k<word_count_of_sentence[i][j];k++)
+			{
+				/* Create memory per word in each sentence */
+				int cur_word_index=word_index[i][j][k].start_index;
+				int next_word_index=word_index[i][j][k].end_index+1;
+				int word_size=next_word_index-cur_word_index;
+				doc[i][j][k]=(char*)calloc(word_size+1,sizeof(char));
+
+				/* Copy that word into memory of that word */
+				int l=0;
+				for(l=0;l<word_size;l++)
+				{
+					doc[i][j][k][l]=text[cur_word_index++];
+				}
+
+				doc[i][j][k][l]='\0';					
+			}
+		}
+	}
 
 	return doc;
 }
@@ -140,7 +176,6 @@ int main()
 {
 	char* text = get_input_text();
 	char**** document = get_document(text);
-
 	int q;
 	scanf("%d", &q);
 
