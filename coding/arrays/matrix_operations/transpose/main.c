@@ -7,7 +7,7 @@ int arr[N][N];
 
 static void print_array(void);
 static void transpose(void);
-static void swap(int[][] *val1,int[][] *val2);
+static void swap(int *val1,int *val2);
 
 int main(void)
 {
@@ -21,6 +21,13 @@ int main(void)
 	}
 
 	print_array();
+	printf("\n");
+
+	transpose();
+
+	print_array();
+	printf("\n");
+
 	return 0;
 }
 
@@ -40,16 +47,16 @@ static void transpose(void)
 {
 	for(int i=0;i<N;i++)
 	{
-		for(int j=0;j<N;j++)
+		for(int j=i;j<N;j++)
 		{
-			printf("%d\t",arr[i][j]);
+			swap(&arr[i][j],&arr[j][i]);
 		}
-		printf("\n");
 	}
 
 }
-static void swap(int[][] *val1,int[][] *val2)
+static void swap(int *val1,int *val2)
 {
-	int temp = **val1;
-	**val
+	int temp = *val1;
+	*val1 = *val2;
+	*val2 = temp;
 }
